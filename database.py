@@ -7,9 +7,21 @@ from pathlib import Path
 
 DB_PATH = Path(__file__).with_name("ai_skills_courses.db")
 SEEDED_CREATION_KEYS = [
-    "A7xQ9L2#mP4zR8$",
-    "B4nT6K1@vS8pL3!",
-    "C9rM2V5&hQ7wN6?",
+    ("A7xQ9L2#mP4zR8$", "generic"),
+    ("B4nT6K1@vS8pL3!", "generic"),
+    ("C9rM2V5&hQ7wN6?", "generic"),
+    ("D5pR8#vL2qM9sT!", "generic"),
+    ("E2mN7@kQ4zP8rW$", "generic"),
+    ("F9tL3&xA6cR2vH?", "generic"),
+    ("G4wC8!nP5yK1qZ#", "generic"),
+    ("H6zV2$eT9mB4xL@", "generic"),
+    ("J8qP3#rN6vC1sY!", "generic"),
+    ("K2mW9@tH5xD7pR$", "generic"),
+    ("L7cA4&zQ8nF2vT?", "generic"),
+    ("N3yR6!pK9mE5xB#", "generic"),
+    ("P5vT1$sL8qG4nW@", "generic"),
+    ("M4rK9A2!dQ7xP5$", "marketing_advertising"),
+    ("Ad8V2#kL9pQ4zR!", "marketing_advertising"),
 ]
 
 
@@ -43,6 +55,7 @@ def init_db() -> None:
                 description TEXT NOT NULL,
                 join_code TEXT NOT NULL UNIQUE,
                 admin_user_id INTEGER NOT NULL,
+                content_template TEXT NOT NULL DEFAULT 'generic',
                 created_at TEXT NOT NULL,
                 FOREIGN KEY (admin_user_id) REFERENCES users(id) ON DELETE CASCADE
             );
@@ -53,6 +66,7 @@ def init_db() -> None:
                 used INTEGER NOT NULL DEFAULT 0,
                 used_by_user_id INTEGER,
                 used_for_course_id INTEGER,
+                content_template TEXT NOT NULL DEFAULT 'generic',
                 created_at TEXT NOT NULL,
                 used_at TEXT,
                 FOREIGN KEY (used_by_user_id) REFERENCES users(id) ON DELETE SET NULL,
@@ -96,14 +110,30 @@ def init_db() -> None:
             );
             """
         )
-        for key_value in SEEDED_CREATION_KEYS:
+        ensure_column(conn, "courses", "content_template", "TEXT NOT NULL DEFAULT 'generic'")
+        ensure_column(conn, "course_creation_keys", "content_template", "TEXT NOT NULL DEFAULT 'generic'")
+        for key_value, content_template in SEEDED_CREATION_KEYS:
             conn.execute(
                 """
-                INSERT OR IGNORE INTO course_creation_keys (key_value, used, created_at)
-                VALUES (?, 0, ?)
+                INSERT OR IGNORE INTO course_creation_keys (key_value, used, content_template, created_at)
+                VALUES (?, 0, ?, ?)
                 """,
-                (key_value, utc_now()),
+                (key_value, content_template, utc_now()),
             )
+            conn.execute(
+                """
+                UPDATE course_creation_keys
+                SET content_template = ?
+                WHERE key_value = ? AND used = 0
+                """,
+                (content_template, key_value),
+            )
+
+
+def ensure_column(conn: sqlite3.Connection, table_name: str, column_name: str, definition: str) -> None:
+    columns = [row["name"] for row in conn.execute(f"PRAGMA table_info({table_name})").fetchall()]
+    if column_name not in columns:
+        conn.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {definition}")
 
 
 def create_user(username: str, password_hash: str) -> int:
@@ -202,11 +232,20 @@ def create_course_from_key(
             """
             INSERT INTO courses (
                 title, company_name, company_type, description, join_code,
-                admin_user_id, created_at
+                admin_user_id, content_template, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (title, company_name, company_type, description, join_code, admin_user_id, utc_now()),
+            (
+                title,
+                company_name,
+                company_type,
+                description,
+                join_code,
+                admin_user_id,
+                key_row["content_template"],
+                utc_now(),
+            ),
         )
         course_id = int(cursor.lastrowid)
         conn.execute(
@@ -262,6 +301,26 @@ def enroll_user_in_course(user_id: int, join_code: str):
         return "success", f"You joined {course['title']}"
 
 
+def leave_course(user_id: int, course_id: int) -> bool:
+    with get_connection() as conn:
+        enrollment = conn.execute(
+            "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?",
+            (user_id, course_id),
+        ).fetchone()
+        if not enrollment:
+            return False
+
+        conn.execute(
+            "DELETE FROM enrollments WHERE user_id = ? AND course_id = ?",
+            (user_id, course_id),
+        )
+        conn.execute(
+            "DELETE FROM progress WHERE user_id = ? AND course_id = ?",
+            (user_id, course_id),
+        )
+        return True
+
+
 def get_enrolled_courses(user_id: int):
     with get_connection() as conn:
         return conn.execute(
@@ -304,10 +363,11 @@ def get_course_for_learning(user_id: int, course_id: int):
             """
             SELECT c.*
             FROM courses c
-            JOIN enrollments e ON e.course_id = c.id
-            WHERE c.id = ? AND e.user_id = ?
+            LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
+            WHERE c.id = ?
+              AND (e.user_id IS NOT NULL OR c.admin_user_id = ?)
             """,
-            (course_id, user_id),
+            (user_id, course_id, user_id),
         ).fetchone()
 
 
@@ -327,11 +387,6 @@ def mark_reading_viewed(user_id: int, course_id: int) -> None:
             """
             UPDATE progress
             SET reading_viewed = 1,
-                progress_percent = CASE
-                    WHEN quiz_completed = 1 THEN 100
-                    WHEN progress_percent < 50 THEN 50
-                    ELSE progress_percent
-                END,
                 updated_at = ?
             WHERE user_id = ? AND course_id = ?
             """,
@@ -356,6 +411,40 @@ def mark_quiz_completed(user_id: int, course_id: int, score: int) -> None:
         )
 
 
+def mark_course_step_completed(user_id: int, course_id: int, completed_steps: int, score: int) -> None:
+    completed_steps = max(0, min(5, completed_steps))
+    progress_percent = completed_steps * 20
+    quiz_completed = 1 if completed_steps >= 5 else 0
+    with get_connection() as conn:
+        ensure_progress_row(conn, user_id, course_id)
+        conn.execute(
+            """
+            UPDATE progress
+            SET reading_viewed = 1,
+                quiz_completed = CASE
+                    WHEN ? = 1 THEN 1
+                    ELSE quiz_completed
+                END,
+                quiz_score = ?,
+                progress_percent = CASE
+                    WHEN progress_percent < ? THEN ?
+                    ELSE progress_percent
+                END,
+                updated_at = ?
+            WHERE user_id = ? AND course_id = ?
+            """,
+            (
+                quiz_completed,
+                score,
+                progress_percent,
+                progress_percent,
+                utc_now(),
+                user_id,
+                course_id,
+            ),
+        )
+
+
 def get_admin_course(admin_user_id: int, course_id: int):
     with get_connection() as conn:
         course = conn.execute(
@@ -374,6 +463,7 @@ def get_admin_course(admin_user_id: int, course_id: int):
         employees = conn.execute(
             """
             SELECT
+                u.id AS user_id,
                 u.username,
                 COALESCE(p.progress_percent, 0) AS progress_percent,
                 COALESCE(p.quiz_completed, 0) AS quiz_completed
@@ -386,6 +476,50 @@ def get_admin_course(admin_user_id: int, course_id: int):
             (course_id,),
         ).fetchall()
         return course, employees
+
+
+def remove_employee_from_course(admin_user_id: int, course_id: int, employee_user_id: int) -> bool:
+    with get_connection() as conn:
+        course = conn.execute(
+            "SELECT id FROM courses WHERE id = ? AND admin_user_id = ?",
+            (course_id, admin_user_id),
+        ).fetchone()
+        if not course:
+            return False
+
+        conn.execute(
+            "DELETE FROM enrollments WHERE user_id = ? AND course_id = ?",
+            (employee_user_id, course_id),
+        )
+        conn.execute(
+            "DELETE FROM progress WHERE user_id = ? AND course_id = ?",
+            (employee_user_id, course_id),
+        )
+        return True
+
+
+def delete_admin_course(admin_user_id: int, course_id: int) -> bool:
+    with get_connection() as conn:
+        course = conn.execute(
+            "SELECT id FROM courses WHERE id = ? AND admin_user_id = ?",
+            (course_id, admin_user_id),
+        ).fetchone()
+        if not course:
+            return False
+
+        conn.execute(
+            "DELETE FROM progress WHERE course_id = ?",
+            (course_id,),
+        )
+        conn.execute(
+            "DELETE FROM enrollments WHERE course_id = ?",
+            (course_id,),
+        )
+        conn.execute(
+            "DELETE FROM courses WHERE id = ? AND admin_user_id = ?",
+            (course_id, admin_user_id),
+        )
+        return True
 
 
 def regenerate_join_code(admin_user_id: int, course_id: int) -> str:

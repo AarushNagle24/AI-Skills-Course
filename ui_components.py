@@ -166,8 +166,17 @@ def inject_css() -> None:
                 text-decoration: none !important;
             }
 
+            a.light-button,
+            a.ghost-button,
+            .stMarkdownContainer a.light-button,
+            .stMarkdownContainer a.ghost-button {
+                color: var(--text) !important;
+                -webkit-text-fill-color: var(--text) !important;
+            }
+
             .light-button *,
             .ghost-button * {
+                color: var(--text) !important;
                 text-decoration: none !important;
             }
 
@@ -251,6 +260,18 @@ def inject_css() -> None:
                 background: #ffffff;
             }
 
+            .home-course-card-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .home-course-card-grid .wide-card {
+                height: 100%;
+                min-height: 100%;
+            }
+
             .soft-card h3,
             .wide-card h3,
             .step-card h3,
@@ -287,7 +308,7 @@ def inject_css() -> None:
             .label {
                 display: inline-block;
                 margin-bottom: 0.7rem;
-                color: #7b8089;
+                color: #5f6670;
                 font-size: 0.82rem;
                 font-weight: 700;
                 text-transform: uppercase;
@@ -357,6 +378,12 @@ def inject_css() -> None:
                 transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
             }
 
+            a.sample-course-tile,
+            .stMarkdownContainer a.sample-course-tile {
+                color: var(--text) !important;
+                -webkit-text-fill-color: var(--text) !important;
+            }
+
             .sample-course-tile,
             .sample-course-tile * {
                 text-decoration: none !important;
@@ -383,19 +410,28 @@ def inject_css() -> None:
                 flex-direction: column;
                 gap: 0.72rem;
                 padding: 1.25rem;
+                text-align: left;
             }
 
-            .sample-course-tile h3 {
+            .sample-course-tile h3,
+            .course-dashboard-tile h3 {
                 font-size: 1.28rem;
                 line-height: 1.22;
                 margin: 0;
                 text-wrap: balance;
+                color: var(--text) !important;
             }
 
             .sample-course-tile p,
-            .sample-course-tile span {
+            .sample-course-tile span,
+            .course-dashboard-tile p,
+            .course-dashboard-tile span {
                 color: var(--muted);
                 line-height: 1.55;
+            }
+
+            .course-dashboard-tile p {
+                margin: 0;
             }
 
             .tile-kicker {
@@ -430,11 +466,105 @@ def inject_css() -> None:
                 margin-top: auto;
             }
 
+            .course-dashboard-tile {
+                overflow: hidden;
+                border-radius: 20px;
+                background: #fbfbfc;
+            }
+
+            .course-dashboard-tile .tile-body {
+                min-height: 220px;
+            }
+
+            .dashboard-card-meta {
+                display: grid;
+                gap: 0.28rem;
+                margin-top: auto;
+                color: var(--muted);
+                font-size: 0.92rem;
+                line-height: 1.45;
+            }
+
+            .dashboard-card-meta span {
+                color: var(--muted);
+            }
+
+            .card-progress {
+                margin: 1rem auto 0.45rem;
+                max-width: 100%;
+            }
+
+            .card-progress .progress-circle {
+                width: 30px;
+                height: 30px;
+                flex-basis: 30px;
+                font-size: 0.82rem;
+            }
+
+            .card-progress .progress-line {
+                flex-basis: 34px;
+            }
+
+            .card-progress-label,
+            .course-percent-label {
+                color: var(--muted);
+                font-size: 0.92rem;
+                font-weight: 640;
+            }
+
+            .card-progress-label {
+                margin-bottom: 0.8rem;
+            }
+
+            .dashboard-action-right {
+                display: block;
+                height: 0;
+                overflow: hidden;
+            }
+
+            [data-testid="stElementContainer"]:has(.dashboard-action-right),
+            [data-testid="stMarkdown"]:has(.dashboard-action-right),
+            [data-testid="stMarkdownContainer"]:has(.dashboard-action-right),
+            [data-testid="stMarkdownContainer"]:has(.dashboard-action-right) p {
+                height: 0 !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
+            [data-testid="stColumn"]:has(.dashboard-action-right) [data-testid="stElementContainer"]:has(.stButton) {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+
+            [data-testid="stColumn"]:has(.dashboard-action-right) .stButton {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+
+            [data-testid="stColumn"]:has(.dashboard-action-right) .stButton > button {
+                width: auto !important;
+                margin-left: auto !important;
+            }
+
+            .course-percent-label {
+                max-width: 900px;
+                margin: -0.8rem auto 1.2rem;
+                text-align: center;
+            }
+
             .sample-viewer {
                 max-width: 900px;
                 margin: 0 auto;
                 padding-top: 2.5rem;
                 text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .sample-viewer h1 {
@@ -442,6 +572,10 @@ def inject_css() -> None:
                 line-height: 1.08;
                 letter-spacing: 0;
                 margin: 0.55rem 0 0.7rem;
+                width: min(100%, 820px);
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
                 text-wrap: balance;
             }
 
@@ -460,9 +594,36 @@ def inject_css() -> None:
                 font-weight: 680;
             }
 
+            .viewer-kicker {
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+
             .viewer-back {
                 display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 38px;
+                padding: 0.58rem 0.9rem;
                 margin-bottom: 1.2rem;
+                border: 1px solid var(--line-strong);
+                border-radius: 999px;
+                background: #ffffff;
+                transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+            }
+
+            a.viewer-back,
+            .stMarkdownContainer a.viewer-back {
+                color: var(--text) !important;
+                -webkit-text-fill-color: var(--text) !important;
+                text-decoration: none !important;
+            }
+
+            .viewer-back:hover {
+                transform: translateY(-1px);
+                border-color: #c8ccd4;
+                background: #f9fafb;
             }
 
             .sample-progress {
@@ -554,19 +715,6 @@ def inject_css() -> None:
                 letter-spacing: 0;
             }
 
-            .video-placeholder {
-                margin-top: 1rem;
-                min-height: 145px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px dashed #cfd3db;
-                border-radius: 18px;
-                background: #ffffff;
-                color: #777c85;
-                font-weight: 640;
-            }
-
             .quiz-status {
                 border-radius: 14px;
                 padding: 0.85rem 1rem;
@@ -587,32 +735,181 @@ def inject_css() -> None:
                 color: #8f2f2f;
             }
 
+            .quiz-status.warning {
+                background: #fff8df;
+                border: 1px solid #ead38a;
+                color: #6d5212;
+            }
+
+            [data-testid="stAlert"] {
+                border-radius: 16px !important;
+                border: 1px solid var(--line-strong) !important;
+                background: #ffffff !important;
+                color: var(--text) !important;
+                box-shadow: none !important;
+                margin: 0.75rem 0 !important;
+            }
+
+            [data-testid="stAlert"] > div {
+                background: #ffffff !important;
+                color: var(--text) !important;
+            }
+
+            [data-testid="stAlert"] *,
+            [data-testid="stAlert"] p,
+            [data-testid="stAlert"] span,
+            [data-testid="stAlert"] div,
+            [data-testid="stAlert"] [data-testid="stMarkdownContainer"],
+            [data-testid="stAlert"] [data-testid="stMarkdownContainer"] * {
+                color: var(--text) !important;
+                opacity: 1 !important;
+            }
+
+            [data-testid="stAlert"] svg,
+            [data-testid="stAlert"] svg * {
+                color: #555b64 !important;
+                fill: #555b64 !important;
+                stroke: #555b64 !important;
+                opacity: 1 !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentError"]),
+            [data-testid="stAlert"]:has([data-testid="stAlertContentError"]) > [data-testid="stAlertContainer"] {
+                background: #fff3f3 !important;
+                border-color: #efc7c7 !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentError"]) *,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentError"]) svg,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentError"]) svg * {
+                color: #8f2f2f !important;
+                fill: #8f2f2f !important;
+                stroke: #8f2f2f !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentInfo"]),
+            [data-testid="stAlert"]:has([data-testid="stAlertContentInfo"]) > [data-testid="stAlertContainer"] {
+                background: #f1f7ff !important;
+                border-color: #bed7f2 !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentInfo"]) *,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentInfo"]) svg,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentInfo"]) svg * {
+                color: #214f7a !important;
+                fill: #214f7a !important;
+                stroke: #214f7a !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]),
+            [data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) > [data-testid="stAlertContainer"] {
+                background: #eefbf3 !important;
+                border-color: #badfc8 !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) *,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) svg,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) svg * {
+                color: #17633a !important;
+                fill: #17633a !important;
+                stroke: #17633a !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]),
+            [data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) > [data-testid="stAlertContainer"] {
+                background: #fff8df !important;
+                border-color: #ead38a !important;
+            }
+
+            [data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) *,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) svg,
+            [data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) svg * {
+                color: #6d5212 !important;
+                fill: #6d5212 !important;
+                stroke: #6d5212 !important;
+            }
+
             [data-testid="stMain"]:has(#sample-course-page) [data-testid="stRadio"],
+            [data-testid="stMain"]:has(#real-course-page) [data-testid="stRadio"],
             [data-testid="stMain"]:has(#sample-course-page) .stButton,
+            [data-testid="stMain"]:has(#real-course-page) .stButton,
             [data-testid="stMain"]:has(#sample-course-page) .quiz-status,
-            [data-testid="stMain"]:has(#sample-course-page) .viewer-actions {
+            [data-testid="stMain"]:has(#real-course-page) .quiz-status,
+            [data-testid="stMain"]:has(#sample-course-page) .viewer-actions,
+            [data-testid="stMain"]:has(#real-course-page) .viewer-actions {
                 width: 100% !important;
                 max-width: 900px !important;
                 margin-left: auto !important;
                 margin-right: auto !important;
+            }
+
+            [data-testid="stMain"]:has(#sample-course-page) .quiz-question-spacer,
+            [data-testid="stMain"]:has(#real-course-page) .quiz-question-spacer {
+                height: 1.25rem;
+                max-width: 900px;
+                margin: 0 auto;
             }
 
             [data-testid="stMain"]:has(#sample-course-page) .stElementContainer:has([data-testid="stRadio"]),
-            [data-testid="stMain"]:has(#sample-course-page) .stElementContainer:has(.stButton) {
+            [data-testid="stMain"]:has(#real-course-page) .stElementContainer:has([data-testid="stRadio"]),
+            [data-testid="stMain"]:has(#sample-course-page) .stElementContainer:has(.stButton),
+            [data-testid="stMain"]:has(#real-course-page) .stElementContainer:has(.stButton) {
                 width: 100% !important;
                 max-width: 900px !important;
                 margin-left: auto !important;
                 margin-right: auto !important;
             }
 
-            [data-testid="stMain"]:has(#sample-course-page) .stButton {
+            [data-testid="stMain"]:has(#sample-course-page) .stButton,
+            [data-testid="stMain"]:has(#real-course-page) .stButton {
                 display: flex !important;
                 justify-content: flex-start !important;
+            }
+
+            [data-testid="stMain"]:has(#sample-course-page) .stButton > button,
+            [data-testid="stMain"]:has(#real-course-page) .stButton > button {
+                width: auto !important;
+            }
+
+            .course-action-left,
+            .course-action-center,
+            .course-action-right {
+                display: block;
+                height: 0;
+                overflow: hidden;
+            }
+
+            [data-testid="stMain"]:has(#real-course-page) .stColumn:has(.course-action-left) .stButton {
+                width: 100% !important;
+                max-width: none !important;
+                display: flex !important;
+                justify-content: flex-start !important;
+            }
+
+            [data-testid="stMain"]:has(#real-course-page) .stColumn:has(.course-action-center) .stButton {
+                width: 100% !important;
+                max-width: none !important;
+                display: flex !important;
+                justify-content: center !important;
+            }
+
+            [data-testid="stMain"]:has(#real-course-page) .stColumn:has(.course-action-right) .stButton {
+                width: 100% !important;
+                max-width: none !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+
+            [data-testid="stMain"]:has(#real-course-page) .stColumn:has(.course-action-left) .stElementContainer,
+            [data-testid="stMain"]:has(#real-course-page) .stColumn:has(.course-action-center) .stElementContainer,
+            [data-testid="stMain"]:has(#real-course-page) .stColumn:has(.course-action-right) .stElementContainer {
+                max-width: 100% !important;
             }
 
             .contact-side {
                 position: sticky;
                 top: 6rem;
+                margin-top: 1rem;
             }
 
             .auth-heading {
@@ -663,6 +960,74 @@ def inject_css() -> None:
                 width: auto !important;
             }
 
+            #change-password-page {
+                display: block;
+                height: 0;
+                overflow: hidden;
+            }
+
+            .change-password-back-action {
+                display: block;
+                height: 0;
+                overflow: hidden;
+            }
+
+            [data-testid="stElementContainer"]:has(.change-password-back-action),
+            [data-testid="stMarkdown"]:has(.change-password-back-action),
+            [data-testid="stMarkdownContainer"]:has(.change-password-back-action),
+            [data-testid="stMarkdownContainer"]:has(.change-password-back-action) p {
+                height: 0 !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
+            [data-testid="stMain"]:has(#change-password-page) .section-title {
+                max-width: 680px;
+                margin-left: auto;
+                margin-right: auto;
+                padding-top: 3rem;
+                text-align: center;
+            }
+
+            [data-testid="stMain"]:has(#change-password-page) [data-testid="stForm"],
+            [data-testid="stMain"]:has(#change-password-page) [data-testid="stAlert"],
+            [data-testid="stMain"]:has(#change-password-page) .stElementContainer:has(.stFormSubmitButton) {
+                width: min(100%, 460px) !important;
+                max-width: 460px !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+
+            [data-testid="stMain"]:has(#change-password-page) [data-testid="stElementContainer"]:has(.change-password-back-action)
+            + [data-testid="stElementContainer"]:has(.stButton) {
+                width: min(100%, 460px) !important;
+                max-width: 460px !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                display: flex !important;
+                justify-content: center !important;
+            }
+
+            [data-testid="stMain"]:has(#change-password-page) [data-testid="stForm"] {
+                border: 0 !important;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+
+            [data-testid="stMain"]:has(#change-password-page) .stFormSubmitButton,
+            [data-testid="stMain"]:has(#change-password-page) .stButton {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: center !important;
+            }
+
+            [data-testid="stMain"]:has(#change-password-page) .stButton > button,
+            [data-testid="stMain"]:has(#change-password-page) .stFormSubmitButton > button {
+                width: auto !important;
+            }
+
             .platform-brand {
                 font-size: 1.12rem;
                 font-weight: 720;
@@ -692,6 +1057,37 @@ def inject_css() -> None:
                 font-weight: 720;
                 margin-bottom: 0.65rem;
                 font-size: 1.08rem;
+            }
+
+            .dashboard-join-panel {
+                display: block;
+                height: 0;
+                overflow: hidden;
+            }
+
+            [data-testid="stElementContainer"]:has(.dashboard-join-panel),
+            [data-testid="stMarkdown"]:has(.dashboard-join-panel),
+            [data-testid="stMarkdownContainer"]:has(.dashboard-join-panel),
+            [data-testid="stMarkdownContainer"]:has(.dashboard-join-panel) p {
+                height: 0 !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
+            [data-testid="stColumn"]:has(.dashboard-join-panel) [data-testid="stForm"] {
+                border: 0 !important;
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            [data-testid="stColumn"]:has(.dashboard-join-panel) [data-testid="stForm"] > div {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
             }
 
             .course-card span {
@@ -809,6 +1205,123 @@ def inject_css() -> None:
             div[role="dialog"] .stButton > button:hover {
                 background: #ffffff !important;
                 color: var(--text) !important;
+            }
+
+            [data-testid="stExpander"],
+            [data-testid="stExpander"] details,
+            [data-testid="stExpander"] summary,
+            [data-testid="stExpander"] summary:hover,
+            [data-testid="stExpander"] summary:focus,
+            [data-testid="stExpander"] summary:active,
+            [data-testid="stExpanderDetails"],
+            details,
+            details summary,
+            details summary:hover,
+            details summary:focus,
+            details summary:active {
+                background: #ffffff !important;
+                color: var(--text) !important;
+                border-color: var(--line) !important;
+                box-shadow: none !important;
+            }
+
+            [data-testid="stExpander"] *,
+            details summary *,
+            [data-testid="stExpanderDetails"] * {
+                color: var(--text) !important;
+            }
+
+            details:not([open]) [data-testid="stExpanderDetails"],
+            details:not([open]) [data-testid="stExpanderDetails"] * {
+                display: none !important;
+                height: 0 !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
+            [data-testid="stMain"]:has(#admin-panel-page) .stElementContainer:has(.admin-back-target),
+            [data-testid="stMain"]:has(#admin-panel-page) .stElementContainer:has(.admin-back-target) + .stElementContainer {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+
+            [data-testid="stMain"]:has(#admin-panel-page) .stColumn:has(.admin-back-target) [data-testid="stVerticalBlock"],
+            [data-testid="stMain"]:has(#admin-panel-page) .stColumn:has(.admin-back-target) [data-testid="stElementContainer"] {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            [data-testid="stMain"]:has(#admin-panel-page) .stColumn:has(.admin-back-target) .stButton {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+
+            [data-testid="stMain"]:has(#admin-panel-page) .stColumn:has(.admin-back-target) .stButton > button {
+                width: auto !important;
+                margin-left: auto !important;
+            }
+
+            [data-testid="stMain"]:has(#admin-panel-page) .stElementContainer:has(.admin-back-target) + .stElementContainer .stButton,
+            [data-testid="stMain"]:has(#admin-panel-page) .stElementContainer:has(.admin-back-target) + .stElementContainer .stButton > button {
+                margin-left: auto !important;
+            }
+
+            .employee-manage-card {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .employee-manage-card h3 {
+                margin: 0 0 0.25rem;
+                font-size: 1.05rem;
+            }
+
+            .employee-manage-card p,
+            .employee-progress-percent {
+                margin: 0;
+                color: var(--muted);
+                font-size: 0.92rem;
+                line-height: 1.45;
+            }
+
+            .employee-progress-percent {
+                white-space: nowrap;
+                font-weight: 650;
+            }
+
+            .delete-course-panel,
+            .leave-course-panel {
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                background: #ffffff;
+                padding: 1rem;
+                margin-bottom: 0.9rem;
+            }
+
+            .delete-course-panel h3,
+            .leave-course-panel h3 {
+                margin: 0 0 0.45rem;
+                font-size: 1.05rem;
+            }
+
+            .delete-course-panel p,
+            .leave-course-panel p {
+                margin: 0.28rem 0;
+                color: var(--muted);
+                line-height: 1.5;
+            }
+
+            .delete-course-panel strong,
+            .leave-course-panel strong {
+                color: var(--text);
             }
 
             .employee-row {
@@ -1135,6 +1648,10 @@ def inject_css() -> None:
                 }
 
                 .template-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .home-course-card-grid {
                     grid-template-columns: 1fr;
                 }
 

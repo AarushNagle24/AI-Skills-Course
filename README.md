@@ -11,7 +11,7 @@ A Streamlit prototype for a company that creates custom AI skills courses for ot
 - Random 6-character uppercase employee join codes
 - Employee course enrollment and progress tracking
 - Admin course management with employee progress, quiz completion, join code regeneration, and course editing
-- Sample placeholder course content with reading lessons, video placeholders, and one-question quizzes
+- Sample course content with reading lessons and quizzes, including a full marketing and advertising sample course
 
 No pricing is shown in the app. Companies submit a request so course scope and pricing can be discussed by email.
 
@@ -46,6 +46,28 @@ These keys are seeded automatically if they are not already present:
 A7xQ9L2#mP4zR8$
 B4nT6K1@vS8pL3!
 C9rM2V5&hQ7wN6?
+```
+
+These 10 additional generic course creation keys are also seeded for testing:
+
+```text
+D5pR8#vL2qM9sT!
+E2mN7@kQ4zP8rW$
+F9tL3&xA6cR2vH?
+G4wC8!nP5yK1qZ#
+H6zV2$eT9mB4xL@
+J8qP3#rN6vC1sY!
+K2mW9@tH5xD7pR$
+L7cA4&zQ8nF2vT?
+N3yR6!pK9mE5xB#
+P5vT1$sL8qG4nW@
+```
+
+These two keys create courses with the same readings and quiz questions as the marketing and advertising sample course:
+
+```text
+M4rK9A2!dQ7xP5$
+Ad8V2#kL9pQ4zR!
 ```
 
 Each key can be used once by a logged-in user to create a company course. After a course is created, the app generates a 6-character join code for employees.
