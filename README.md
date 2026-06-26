@@ -88,3 +88,9 @@ Each key can be used once by a logged-in user to create a company course. After 
 ## Prototype note
 
 SQLite is used for local prototype and demo storage. For production, use a managed database, stronger account controls, email delivery, audit logging, and a more complete course authoring workflow.
+
+## Portfolio
+
+View the portfolio here:
+
+https://github.com/varshajagadeesh/Aardvarks_portfolio/tree/main
